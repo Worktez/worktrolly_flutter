@@ -6,7 +6,10 @@ class ErrorComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text("Error loading the content..."),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Text("Error loading the content..."),
+      ),
     );
   }
 }

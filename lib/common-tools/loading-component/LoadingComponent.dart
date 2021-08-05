@@ -6,7 +6,10 @@ class LoadingComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text("Loading..."),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Text("Loading..."),
+      ),
     );
   }
 }
