@@ -18,6 +18,8 @@
     <meta content="IE=Edge" http-equiv="X-UA-Compatible">
     <meta name="description" content="A new Flutter project.">
 
+    <meta name="google-signin-client_id" content="358996208239-5tf34h6nj89rmi3t6esh9p1les9r9u9p.apps.googleusercontent.com">
+
     <!-- iOS meta tags & icons -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -33,21 +35,21 @@
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
     <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
     <script>
-        console.log('hello');
         var firebaseConfig = {
-            apiKey: "AIzaSyAP-cLcP8gB3bsUHSK9oexPq0BDykBPzzE",
-            authDomain: "worktrolly.firebaseapp.com",
-            databaseURL: "https://worktrolly.firebaseio.com",
-            projectId: "worktrolly",
-            storageBucket: "worktrolly.appspot.com",
-            messagingSenderId: "358996208239",
-            appId: "1:358996208239:web:73a1939b7267070d2dfb9a",
-            measurementId: "G-FEQ8PFLLCV",
+            
         };
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
+
+        // GoogleAuthProvider googleProvider = GoogleAuthProvider();
+
+        // googleProvider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+        // googleProvider.setCustomParameters({
+        // 'login_hint': 'user@example.com'
+        // });
     </script>
     <script>
         var serviceWorkerVersion = null;
@@ -76,7 +78,6 @@
                         function waitForActivation(serviceWorker) {
                             serviceWorker.addEventListener('statechange', () => {
                                 if (serviceWorker.state == 'activated') {
-                                    console.log('Installed new service worker.');
                                     loadMainDartJs();
                                 }
                             });
@@ -88,12 +89,10 @@
                         } else if (!reg.active.scriptURL.endsWith(serviceWorkerVersion)) {
                             // When the app updates the serviceWorkerVersion changes, so we
                             // need to ask the service worker to update.
-                            console.log('New service worker available.');
                             reg.update();
                             waitForActivation(reg.installing);
                         } else {
                             // Existing service worker is still good.
-                            console.log('Loading app from service worker.');
                             loadMainDartJs();
                         }
                     });
