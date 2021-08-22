@@ -15,6 +15,7 @@ A few resources to get you started if this is your first Flutter project:
 ## Android Fix for auth emulator
 
 Use below command to generate sha1 and sha256 and add the sha1 to Firebase auth project.
+
 `./gradlew signinReport`
 
 For help getting started with Flutter, view our
