@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:worktrolly_flutter/services/AuthService/authservice.dart';
 
 class NavigatorService {
   Widget headWidget = Text("Head");
@@ -10,6 +11,7 @@ class NavigatorService {
 
   loadApplication(BuildContext ctx) {
     print("Loading Application...");
+    authService.getUserAppSettings();
     loggedIn = true;
     print(currentPage);
     if (currentPage == "Login") {

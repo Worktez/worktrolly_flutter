@@ -1,20 +1,23 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:worktrolly_flutter/environment/environment.dart';
+import 'package:worktrolly_flutter/interface/userInterface.dart';
 import 'package:worktrolly_flutter/services/ApplicationService/applicationService.dart';
 import 'package:worktrolly_flutter/services/NavigatorService/NavigatorService.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:worktrolly_flutter/services/ThemeService/ThemeService.dart';
 
 FirebaseAuth auth = FirebaseAuth.instance;
+FirebaseFirestore firestore = FirebaseFirestore.instance;
+FirebaseFunctions functions = FirebaseFunctions.instance;
 
 class AuthService {
-  User? user;
-
   getAuthState(BuildContext ctx) {
-    print("Getting auth state");
-    print(ctx);
     auth.authStateChanges().listen(
       (User? user) {
         if (user == null) {
@@ -22,7 +25,8 @@ class AuthService {
           navigatorService.stopApplication(ctx);
         } else {
           print('User is signed in!');
-          user = FirebaseAuth.instance.currentUser;
+          user = auth.currentUser;
+          userInterface.setUser(user);
           navigatorService.loadApplication(ctx);
         }
       },
@@ -30,6 +34,33 @@ class AuthService {
         print(err);
       },
     );
+  }
+
+  Future<void> createUser() async {
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('users');
+    final results = await callable({
+      'mode': "create",
+      'uid': userInterface.uid,
+      'photoURL': userInterface.photoURL,
+      'displayName': userInterface.displayName,
+      'email': userInterface.email,
+      'phoneNumber': userInterface.phoneNumber,
+      'providerId': userInterface.providerId,
+    });
+    String data = results.data;
+    print(data);
+    loading = false;
+  }
+
+  Future<void> getUserAppSettings() async {
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('users');
+    final results = await callable({
+      'mode': "getUserAppSettings",
+      'Uid': userInterface.uid,
+    });
+    Map<String, dynamic> result = new Map<String, dynamic>.from(results.data);
+    userInterface.setUserAppSetting(result);
+    loading = false;
   }
 
   registerWithEmail() async {
@@ -49,6 +80,7 @@ class AuthService {
   }
 
   signInWithGogleWeb() async {
+    loading = true;
     print("Signing with google...");
     GoogleAuthProvider googleProvider = GoogleAuthProvider();
 
@@ -56,8 +88,12 @@ class AuthService {
         .addScope('https://www.googleapis.com/auth/contacts.readonly');
     googleProvider.setCustomParameters({'login_hint': 'user@example.com'});
 
-    await signInWithGoogle();
-    print("Sign in pop up");
+    signInWithGoogle().then((value) {
+      if (value.user != null) {
+        userInterface.setUser(value.user);
+        createUser();
+      }
+    });
   }
 
   Future<UserCredential> signInWithGoogle() async {

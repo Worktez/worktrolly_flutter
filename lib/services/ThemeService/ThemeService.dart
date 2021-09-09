@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+bool loading = false;
+
 Image appLogo = new Image(
   image: new ExactAssetImage("assets/images/logo.png"),
   width: 45,

@@ -1,3 +1,4 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:worktrolly_flutter/environment/environment.dart';
@@ -58,5 +59,7 @@ Future setEmulator() async {
   if (USE_EMULATOR) {
     final localHostString = getEmulatorLink();
     await FirebaseAuth.instance.useAuthEmulator(localHostString, 9099);
+    // Ideal time to initialize
+    FirebaseFunctions.instance.useFunctionsEmulator(localHostString, 7001);
   }
 }
